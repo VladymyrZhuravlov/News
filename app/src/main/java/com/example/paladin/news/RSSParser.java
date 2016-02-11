@@ -43,12 +43,8 @@ public class RSSParser {
 
     }
 
-    /***
-     * Get RSS feed from url
-     *
-     * @param url - is url of the website
-     * @return RSSFeed class object
-     */
+    // Get RSS feed from url
+
     public RSSFeed getRSSFeed(String url) {
         RSSFeed rssFeed = null;
         String rss_feed_xml = null;
@@ -58,11 +54,14 @@ public class RSSParser {
 
         // check if rss_link is found or not
         if (rss_url != null) {
+
             // RSS url found
             // get RSS XML from rss ulr
             rss_feed_xml = this.getXmlFromUrl(rss_url);
+
             // check if RSS XML fetched or not
             if (rss_feed_xml != null) {
+
                 // successfully fetched rss xml
                 // parse the xml
                 try {
@@ -79,6 +78,7 @@ public class RSSParser {
                     // Creating new RSS Feed
                     rssFeed = new RSSFeed(title, description, link, rss_url, language);
                 } catch (Exception e) {
+
                     // Check log for errors
                     e.printStackTrace();
                 }
@@ -92,12 +92,8 @@ public class RSSParser {
         return rssFeed;
     }
 
-    /**
-     * Getting RSS feed items <item>
-     *
-     * @param - rss link url of the website
-     * @return - List of RSSItem class objects
-     * */
+   // Getting RSS feed items <item>
+
     public List<RSSItem> getRSSFeedItems(String rss_url){
         List<RSSItem> itemsList = new ArrayList<RSSItem>();
         String rss_feed_xml;
@@ -107,6 +103,7 @@ public class RSSParser {
 
         // check if RSS XML fetched or not
         if(rss_feed_xml != null){
+
             // successfully fetched rss xml
             // parse the xml
             try{
@@ -142,18 +139,16 @@ public class RSSParser {
         return itemsList;
     }
 
-    /*
-      Getting RSS feed link from HTML source code
-      @param ulr is url of the website
-      @returns url of rss link of website
-      */
+    //Getting RSS feed link from HTML source code
     public String getRSSLinkFromURL(String url) {
+
         // RSS url
         String rss_url = null;
 
         try {
             // Using JSoup library to parse the html source code
             org.jsoup.nodes.Document doc = Jsoup.connect(url).get();
+
             // finding rss links which are having link[type=application/rss+xml]
             org.jsoup.select.Elements links = doc
                     .select("link[type=application/rss+xml]");
@@ -164,6 +159,7 @@ public class RSSParser {
             if (links.size() > 0) {
                 rss_url = links.get(0).attr("href").toString();
             } else {
+
                 // finding rss links which are having link[type=application/rss+xml]
                 org.jsoup.select.Elements links1 = doc
                         .select("link[type=application/atom+xml]");
@@ -180,9 +176,7 @@ public class RSSParser {
         return rss_url;
     }
 
-    /**
-     * Method to get xml content from url HTTP Get request
-     * */
+    // Method to get xml content from url HTTP Get request
     public String getXmlFromUrl(String url) {
         String xml = null;
 
@@ -197,8 +191,10 @@ public class RSSParser {
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+
         } catch (ClientProtocolException e) {
             e.printStackTrace();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -206,12 +202,9 @@ public class RSSParser {
         return xml;
     }
 
-    /*
-      Getting XML DOM element
-
-      @param XML string
-      */
+    // Getting XML DOM element
     public Document getDomElement(String xml) {
+
         Document doc = null;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
@@ -225,9 +218,11 @@ public class RSSParser {
         } catch (ParserConfigurationException e) {
             Log.e("Error: ", e.getMessage());
             return null;
+
         } catch (SAXException e) {
             Log.e("Error: ", e.getMessage());
             return null;
+
         } catch (IOException e) {
             Log.e("Error: ", e.getMessage());
             return null;
@@ -236,17 +231,16 @@ public class RSSParser {
         return doc;
     }
 
-    /*
-      Getting node value
-
-      @param elem element
-     */
+    //Getting node value
     public final String getElementValue(Node elem) {
         Node child;
         if (elem != null) {
+
             if (elem.hasChildNodes()) {
+
                 for (child = elem.getFirstChild(); child != null; child = child
                         .getNextSibling()) {
+
                     if (child.getNodeType() == Node.TEXT_NODE || ( child.getNodeType() == Node.CDATA_SECTION_NODE)) {
                         return child.getNodeValue();
                     }
@@ -256,13 +250,9 @@ public class RSSParser {
         return "";
     }
 
-    /*
-      Getting node value
-
-      @param Element node
-      @param key  string
-      */
+    //Getting node value
     public String getValue(Element item, String str) {
+
         NodeList n = item.getElementsByTagName(str);
         return this.getElementValue(n.item(0));
     }

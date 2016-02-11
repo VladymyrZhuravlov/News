@@ -9,9 +9,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Paladin on 09.02.2016.
- */
 public class DBHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
@@ -29,10 +26,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         String CREATE_RSS_TABLE = "CREATE TABLE " + TABLE_RSS + "(" + KEY_ID
                 + " INTEGER PRIMARY KEY," + KEY_TITLE + " TEXT," + KEY_LINK
                 + " TEXT," + KEY_RSS_LINK + " TEXT," + KEY_DESCRIPTION
                 + " TEXT" + ")";
+
         db.execSQL(CREATE_RSS_TABLE);
     }
 
@@ -42,27 +41,34 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
     public void addSite(Web site) {
+
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+
         values.put(KEY_TITLE, site.getTitle());
         values.put(KEY_LINK, site.getLink());
         values.put(KEY_RSS_LINK, site.getRSSLink());
         values.put(KEY_DESCRIPTION, site.getDescription());
+
         // Check if row already existed in database
         if (!isSiteExists(db, site.getRSSLink())) {
+
             // site not existed, create a new row
             db.insert(TABLE_RSS, null, values);
             db.close();
+
         } else {
+
             // site already existed update the row
             updateSite(site);
             db.close();
         }
     }
     public List<Web> getAllSites() {
+
         List<Web> siteList = new ArrayList<Web>();
-        // Select All Query
+        // Select all query
         String selectQuery = "SELECT  * FROM " + TABLE_RSS
                 + " ORDER BY id DESC";
 
@@ -71,17 +77,23 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
+
             do {
+
                 Web site = new Web();
+
                 site.setId(Integer.parseInt(cursor.getString(0)));
                 site.setTitle(cursor.getString(1));
                 site.setLink(cursor.getString(2));
                 site.setRssLink(cursor.getString(3));
                 site.setDescription(cursor.getString(4));
+
                 // Adding contact to list
                 siteList.add(site);
+
             } while (cursor.moveToNext());
         }
+
         cursor.close();
         db.close();
 
@@ -99,10 +111,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
         int update = db.update(TABLE_RSS, values, KEY_RSS_LINK + " = ?",
                 new String[] { String.valueOf(site.getRSSLink()) });
+
         db.close();
         return update;
     }
+
     public Web getSite(int id) {
+
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_RSS, new String[] { KEY_ID, KEY_TITLE,
@@ -119,15 +134,18 @@ public class DBHelper extends SQLiteOpenHelper {
         site.setLink(cursor.getString(2));
         site.setRssLink(cursor.getString(3));
         site.setDescription(cursor.getString(4));
+
         cursor.close();
         db.close();
         return site;
     }
     public void deleteSite(Web site) {
+
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_RSS, KEY_ID + " = ?",
                 new String[]{String.valueOf(site.getId())});
         db.close();
+
     }
     public boolean isSiteExists(SQLiteDatabase db, String rss_link) {
 

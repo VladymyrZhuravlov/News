@@ -7,9 +7,6 @@ import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-/**
- * Created by Paladin on 09.02.2016.
- */
 public class DisPlayWebPage extends Activity {
 
     WebView webview;
@@ -20,10 +17,13 @@ public class DisPlayWebPage extends Activity {
         setContentView(R.layout.webview);
 
         Intent in = getIntent();
+
         String page_url = in.getStringExtra("page_url");
 
         webview = (WebView) findViewById(R.id.webpage);
+
         webview.getSettings().setJavaScriptEnabled(true);
+
         webview.loadUrl(page_url);
 
         webview.setWebViewClient(new DisPlayWebPageActivityClient());
@@ -31,14 +31,17 @@ public class DisPlayWebPage extends Activity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+
         if ((keyCode == KeyEvent.KEYCODE_BACK) && webview.canGoBack()) {
             webview.goBack();
+
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
     private class DisPlayWebPageActivityClient extends WebViewClient {
+
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             view.loadUrl(url);

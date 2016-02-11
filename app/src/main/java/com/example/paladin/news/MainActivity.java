@@ -22,10 +22,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends Activity {
+
     public static String TAG_ID = "id";
     public static String TAG_TITLE = "title";
     public static String TAG_LINK = "link";
+
     private ProgressDialog pDialog;
+
     ArrayList<HashMap<String, String>> rssFeedList;
     ImageButton btnAddSite;
     String[] sqliteIds;
@@ -50,15 +53,19 @@ public class MainActivity extends Activity {
 
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
+
                 // getting values from selected ListItem
                 String sqlite_id = ((TextView) view.findViewById(R.id.sqlite_id)).getText().toString();
+
                 // Starting new intent
                 Intent in = new Intent(getApplicationContext(), ListRSSItems.class);
+
                 // passing sqlite row id
                 in.putExtra(TAG_ID, sqlite_id);
                 startActivity(in);
             }
         });
+
         //Add new website button click event listener
         btnAddSite.setOnClickListener(new View.OnClickListener() {
 
@@ -72,8 +79,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         // if result code 100
         if (resultCode == 100) {
+
             // reload this screen again
             Intent intent = getIntent();
             finish();
@@ -95,14 +104,17 @@ public class MainActivity extends Activity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         int menuItemIndex = item.getItemId();
+
         // check for selected option
         if(menuItemIndex == 0){
+
             // user selected delete
             // delete the feed
             DBHelper rssDb = new DBHelper(getApplicationContext());
             Web site = new Web();
             site.setId(Integer.parseInt(sqliteIds[info.position]));
             rssDb.deleteSite(site);
+
             //reloading same activity again
             Intent intent = getIntent();
             finish();
@@ -111,6 +123,7 @@ public class MainActivity extends Activity {
 
         return true;
     }
+
     //Background Async Task to get RSS data from URL
     class loadStoreSites extends AsyncTask<String, String, String> {
 
@@ -125,9 +138,11 @@ public class MainActivity extends Activity {
             pDialog.setCancelable(false);
             pDialog.show();
         }
+
          //getting all stored website from SQLite
         @Override
         protected String doInBackground(String... args) {
+
             // updating UI from Background Thread
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -159,12 +174,14 @@ public class MainActivity extends Activity {
                         // used when deleting a website from sqlite
                         sqliteIds[i] = s.getId().toString();
                     }
+
                      //Updating list view with websites
                     ListAdapter adapter = new SimpleAdapter(
                             MainActivity.this,
                             rssFeedList, R.layout.site_list_row,
                             new String[] { TAG_ID, TAG_TITLE, TAG_LINK },
                             new int[] { R.id.sqlite_id, R.id.title, R.id.link });
+
                     // updating listview
                     lv.setAdapter(adapter);
                     registerForContextMenu(lv);
@@ -175,6 +192,7 @@ public class MainActivity extends Activity {
 
         // After completing background task Dismiss the progress dialog
         protected void onPostExecute(String args) {
+
             // dismiss the dialog after getting all products
             pDialog.dismiss();
         }

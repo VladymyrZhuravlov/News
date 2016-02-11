@@ -28,6 +28,7 @@ public class ListRSSItems extends ListActivity {
     private static String TAG_DESRIPTION = "description";
     private static String TAG_PUB_DATE = "pubDate";
     private ProgressDialog pDialog;
+
     ArrayList<HashMap<String, String>> rssItemList = new ArrayList<HashMap<String,String>>();
     RSSParser rssParser = new RSSParser();
     List<RSSItem> rssItems = new ArrayList<RSSItem>();
@@ -53,6 +54,7 @@ public class ListRSSItems extends ListActivity {
 
          //Calling a backgroung thread will loads recent articles of a website @param rss url of website
         new loadRSSFeedItems().execute(rss_link);
+
         // selecting single ListView item
         ListView lv = getListView();
 
@@ -79,6 +81,7 @@ public class ListRSSItems extends ListActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
             pDialog = new ProgressDialog(
                     ListRSSItems.this);
             pDialog.setMessage("Loading recent articles...");
@@ -90,6 +93,7 @@ public class ListRSSItems extends ListActivity {
          //getting all recent articles and showing them in listview
         @Override
         protected String doInBackground(String... args) {
+
             // rss link url
             String rss_url = args[0];
 
@@ -98,6 +102,7 @@ public class ListRSSItems extends ListActivity {
 
             // looping through each item
             for(RSSItem item : rssItems){
+
                 // creating new HashMap
                 HashMap<String, String> map = new HashMap<String, String>();
 
@@ -106,10 +111,12 @@ public class ListRSSItems extends ListActivity {
                 map.put(TAG_LINK, item.getLink());
                 map.put(TAG_PUB_DATE, item.getPubdate());
                 String description = item.getDescription();
+
                 // taking only 200 chars from description
                 if(description.length() > 100){
                     description = description.substring(0, 97) + "..";
                 }
+
                 map.put(TAG_DESRIPTION, description);
 
                 // adding HashList to ArrayList
@@ -119,6 +126,7 @@ public class ListRSSItems extends ListActivity {
             // updating UI from Background Thread
             runOnUiThread(new Runnable() {
                 public void run() {
+
                      //Updating parsed items into listview
                     ListAdapter adapter = new SimpleAdapter(
                             ListRSSItems.this,
@@ -132,8 +140,10 @@ public class ListRSSItems extends ListActivity {
             });
             return null;
         }
+
          //After completing background task Dismiss the progress dialog
         protected void onPostExecute(String args) {
+
             // dismiss the dialog after getting all products
             pDialog.dismiss();
         }

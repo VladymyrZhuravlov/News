@@ -11,9 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-/**
- * Created by Paladin on 09.02.2016.
- */
 public class AddNewSite extends Activity {
 
     Button btnSubmit;
@@ -22,6 +19,7 @@ public class AddNewSite extends Activity {
     TextView lblMessage;
     RSSParser rssParser = new RSSParser();
     RSSFeed rssFeed;
+
     private ProgressDialog pDialog;
 
     @Override
@@ -39,22 +37,29 @@ public class AddNewSite extends Activity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
+
                 String url = txtUrl.getText().toString();
 
                 // Validation url
                 Log.d("URL Length", "" + url.length());
+
                 // check if user entered any data in EditText
                 if (url.length() > 0) {
+
                     lblMessage.setText("");
                     String urlPattern = "^http(s{0,1})://[a-zA-Z0-9_/\\-\\.]+\\.([A-Za-z/]{2,5})[a-zA-Z0-9_/\\&\\?\\=\\-\\.\\~\\%]*";
                     if (url.matches(urlPattern)) {
+
                         // valid url
                         new loadRSSFeed().execute(url);
+
                     } else {
+
                         // URL not valid
                         lblMessage.setText("Please enter a valid url");
                     }
                 } else {
+
                     // Please enter url
                     lblMessage.setText("Please enter website url");
                 }
@@ -72,13 +77,13 @@ public class AddNewSite extends Activity {
 
 
      //Background Async Task to get RSS data from URL
-
     class loadRSSFeed extends AsyncTask<String, String, String> {
 
         //Before starting background thread Show Progress Dialog
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
             pDialog = new ProgressDialog(AddNewSite.this);
             pDialog.setMessage("Fetching RSS Information ...");
             pDialog.setIndeterminate(false);
@@ -89,24 +94,35 @@ public class AddNewSite extends Activity {
          //getting Inbox JSON
          @Override
         protected String doInBackground(String... args) {
+
             String url = args[0];
+
             rssFeed = rssParser.getRSSFeed(url);
+
             Log.d("rssFeed", " "+ rssFeed);
+
             if (rssFeed != null) {
                 Log.e("RSS URL",
                         rssFeed.getTitle() + "" + rssFeed.getLink() + ""
                                 + rssFeed.getDescription() + ""
                                 + rssFeed.getLanguage());
+
                 DBHelper rssDb = new DBHelper(
                         getApplicationContext());
+
                 Web site = new Web(rssFeed.getTitle(), rssFeed.getLink(), rssFeed.getRssLink(),
                         rssFeed.getDescription());
+
                 rssDb.addSite(site);
+
                 Intent i = getIntent();
+
                 // send result code 100 to notify about product update
                 setResult(100, i);
                 finish();
+
             } else {
+
                 // updating UI from Background Thread
                 runOnUiThread(new Runnable() {
                     public void run() {
@@ -114,13 +130,16 @@ public class AddNewSite extends Activity {
                     }
                 });
             }
+
             return null;
         }
 
          //After completing background task Dismiss the progress dialog
         protected void onPostExecute(String args) {
+
             // dismiss the dialog after getting all products
             pDialog.dismiss();
+
             // updating UI from Background Thread
             runOnUiThread(new Runnable() {
                 public void run() {
